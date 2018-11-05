@@ -10,7 +10,7 @@ TIPOS_MENSAGENS = ['AppendEntries', 'AppendEntriesCommitted', 'UknownIndex', 'Re
 
 
 
-print('----------------------------------Iniciando Cliente-------------------------------')
+#print('----------------------------------Iniciando Cliente-------------------------------')
 
 
 
@@ -39,8 +39,8 @@ def sendRequest(msg, host):
 
 
 while(True):
-    time.sleep(3)
+    time.sleep(10)
     numero = str(randint(0,9999999))
-    print('Enviando numero '+str(numero)+' para ser escrito')
+    #print('Enviando numero '+str(numero)+' para ser escrito')
     sendEverybody(create_msg(TIPOS_MENSAGENS[7],numero))
 

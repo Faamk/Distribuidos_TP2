@@ -26,7 +26,7 @@ lastThing = ''
 
 
 
-print('----------------------------------Iniciando Nodo Raft-------------------------------')
+#print('----------------------------------Iniciando Nodo Raft-Fabrizio-------------------------------')
 
 
 def getIndex():
@@ -60,7 +60,7 @@ async def sendHeartbeat():
 
 
 async def add_time():
-    print (status)
+    #print (status)
     while True:
         if status != STATUS_POSSIVEIS[0]:
             await asyncio.sleep(1)
@@ -68,15 +68,15 @@ async def add_time():
             global contador_max
             global votos
             contado = contado+1
-            print('tempo restante para Timeout: '+str(contado))
+            #print('tempo restante para Timeout: '+str(contado))
             if contado==contador_max:
-                print('Requisitando Votacao para lider')
+                #print('Requisitando Votacao para lider')
                 votos = 0
                 await sendVoteRequest()
                 contado = 0
         else:
             await asyncio.sleep(1)
-            print('Heartbeat')
+            #print('Heartbeat')
             await sendHeartbeat()
 
 
@@ -125,7 +125,7 @@ async def checkIfWin():
     if votos >= votos_max:
         status = STATUS_POSSIVEIS[0]
         ID_LIDER = ID
-        print('FUI ELEITO' + str(status))
+        #print('FUI ELEITO' + str(status))
         await sendLog(create_msg(TIPOS_MENSAGENS[0],'Nodo '+str(ID)+' - Eleito Lider',index),'Nodo '+str(ID)+' - Eleito Lider')
         votos = 0
         contado = 0
@@ -133,17 +133,13 @@ async def checkIfWin():
 
 
 async def denyvote(ip):
-    print('NAO votei em '+str(ip)+' para lider')
+    #print('NAO votei em '+str(ip)+' para lider')
     await sendRequest(create_msg(TIPOS_MENSAGENS[5], '',index),ip)
 
 
 async def giveVote(ip):
-    print('votei em '+str(ip)+' para lider')
+    #print('votei em '+str(ip)+' para lider')
     await  sendRequest(create_msg(TIPOS_MENSAGENS[4], '',index),ip)
-
-
-def commitChanges():
-    pass
 
 
 async def handle_client(reader, writer):
@@ -155,7 +151,7 @@ async def handle_client(reader, writer):
     global confirmations
 
     if joso['message-type'] == TIPOS_MENSAGENS[7] and status == STATUS_POSSIVEIS[0]:
-        print('Msg do cliente recebida!')
+        #print('Msg do cliente recebida!')
         await sendLog(create_msg(TIPOS_MENSAGENS[0],'Msg do Cliente - ' + joso['content'],index),'Msg do Cliente - ' + joso['content'])
 
 
@@ -163,17 +159,17 @@ async def handle_client(reader, writer):
 
 
     if   joso['message-type']==TIPOS_MENSAGENS[6]:
-        print('Heartbeat Recebido')
+        #print('Heartbeat Recebido')
         contado=0;
     elif joso['message-type']==TIPOS_MENSAGENS[5]:
         pass
     elif joso['message-type']==TIPOS_MENSAGENS[4]:
         if status == STATUS_POSSIVEIS[2]:
-            print('Recebi voto de '+str(joso['ip']))
+            #print('Recebi voto de '+str(joso['ip']))
             votos+=1
             await checkIfWin()
     elif joso['message-type']==TIPOS_MENSAGENS[3]:
-        print ('votos:'+str(votos))
+        #print ('votos:'+str(votos))
         if status == STATUS_POSSIVEIS[0]:
             await denyvote(joso['ip'])
             contado=0
@@ -192,15 +188,14 @@ async def handle_client(reader, writer):
             confirmations+=1
             if confirmations>=confirmations_max:
                 confirmations=0
-                commitChanges()
 
 
     elif joso['message-type'] == TIPOS_MENSAGENS[0]:
-        print(joso)
-        print('Meu index - '+str(index))
+        #print(joso)
+        #print('Meu index - '+str(index))
         contado=0;
         if(int(joso['logIndex'])-1>index):
-            print('Detectado Indice de log - '+str(joso['logIndex'])+' - maior q o meu : '+str(index))
+            #print('Detectado Indice de log - '+str(joso['logIndex'])+' - maior q o meu : '+str(index))
             await sendRequest(create_msg(TIPOS_MENSAGENS[2],joso['content'],int(joso['logIndex'])),joso['ip'])
         elif(int(joso['logIndex'])-1==index):
             writelog(joso['content'])
@@ -208,7 +203,7 @@ async def handle_client(reader, writer):
 
 
 loop = asyncio.get_event_loop()
-print("vou tentar entrar no socket"+' localhost' +str(LINK.split(':')[1]))
+#print("vou tentar entrar no socket"+' localhost' +str(LINK.split(':')[1]))
 loop.create_task(asyncio.start_server(handle_client, '0.0.0.0', LINK.split(':')[1]))
 loop.create_task(add_time())
 try:
