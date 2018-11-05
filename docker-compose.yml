@@ -1,0 +1,67 @@
+version: '3'
+services:
+  nodo1:
+    container_name: nodo1
+    build: .
+    environment:
+      - IP=10.5.0.2:15555
+      - IPRANGE=10.5.0.3:15555,10.5.0.4:15555,10.5.0.5:15555
+      - ID=1
+      - LOGFILE=log.txt
+    restart: always
+    networks:
+      inter:
+          ipv4_address: 10.5.0.2
+  nodo2:
+    container_name: nodo2
+    build: .
+    environment:
+    - IP=10.5.0.3:15555
+    - IPRANGE=10.5.0.2:15555,10.5.0.4:15555,10.5.0.5:15555
+    - ID=2
+    - LOGFILE=log.txt
+    restart: always
+    networks:
+      inter:
+        ipv4_address: 10.5.0.3
+  nodo3:
+    container_name: nodo3
+    build: .
+    environment:
+    - IP=10.5.0.4:15555
+    - IPRANGE=10.5.0.2:15555,10.5.0.3:15555,10.5.0.5:15555
+    - ID=3
+    - LOGFILE=log.txt
+    restart: always
+    networks:
+      inter:
+        ipv4_address: 10.5.0.4
+  nodo4:
+    container_name: nodo4
+    build: .
+    environment:
+    - IP=10.5.0.5:15555
+    - IPRANGE=10.5.0.2:15555,10.5.0.3:15555,10.5.0.4:15555
+    - ID=4
+    - LOGFILE=log.txt
+    restart: always
+    networks:
+      inter:
+        ipv4_address: 10.5.0.5
+  cliente:
+    container_name: cliente
+    build: ./Client/.
+    environment:
+    - IPRANGE=10.5.0.2:15555,10.5.0.3:15555,10.5.0.4:15555,10.5.0.5:15555
+    restart: always
+    networks:
+      inter:
+        ipv4_address: 10.5.0.6
+
+
+networks:
+  inter:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 10.5.0.0/16
